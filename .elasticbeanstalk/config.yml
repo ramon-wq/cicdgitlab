@@ -1,6 +1,6 @@
 branch-defaults:
   master:
-    environment: prod
+    environment: null
     group_suffix: null
 global:
   application_name: cicdinvestigation
