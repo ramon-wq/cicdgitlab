@@ -12,8 +12,8 @@ test:
 
 .credentails_template: &credentials
   before_script:
-    - printf "[default]\naws_access_key_id = %s\naws_secret_access_key = %s\n" "$AWS_ACCESS_KEY_ID" "$AWS_SECRET_ACCESS_KEY" > ~/.aws/credentials
-    - printf "[default]\nregion=us-east-1" > ~/.aws/config
+    - printf "[ramonwork]\naws_access_key_id = %s\naws_secret_access_key = %s\n" "$AWS_ACCESS_KEY_ID" "$AWS_SECRET_ACCESS_KEY" > ~/.aws/credentials
+    - printf "[ramonwork]\nregion=us-east-1" > ~/.aws/config
 
 deploy_review:
   <<: *credentials
