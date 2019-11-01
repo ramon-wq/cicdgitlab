@@ -1,0 +1,57 @@
+test:
+  image: "ruby:2.6.3"
+  before_script:
+    - gem install bundler --no-document
+    - bundle install
+    - RAILS_ENV=test bundle exec rails db:schema:load
+  script:
+    - bundle exec rspec
+  only:
+    - merge_requests
+    - master
+
+.credentails_template: &credentials
+  before_script:
+    - printf "[default]\naws_access_key_id = %s\naws_secret_access_key = %s\n" "$AWS_ACCESS_KEY_ID" "$AWS_SECRET_ACCESS_KEY" > ~/.aws/credentials
+    - printf "[default]\nregion=us-east-1" > ~/.aws/config
+
+deploy_review:
+  <<: *credentials
+  stage: deploy
+  image: coxauto/aws-ebcli
+  script:
+    - chmod +x ./deploy.sh
+    - ./deploy.sh
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    url: http://git-shoutout-$CI_ENVIRONMENT_SLUG.us-east-1.elasticbeanstalk.com
+    on_stop: stop_review
+  only:
+    - merge_requests
+
+stop_review:
+  <<: *credentials
+  stage: deploy
+  image: coxauto/aws-ebcli
+  script:
+    - eb terminate --force "$CI_ENVIRONMENT_SLUG" | tee "$CIRCLE_ARTIFACTS/eb_deploy_output.txt"
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    action: stop
+  only:
+    - merge_requests
+  when:
+    manual
+    
+deploy:
+  <<: *credentials
+  stage: deploy
+  image: coxauto/aws-ebcli
+  script:
+    - chmod +x ./deploy.sh
+    - ./deploy.sh
+  environment:
+    name: staging
+    url: http://git-shoutout-staging.us-east-1.elasticbeanstalk.com
+  only:
+    - master
