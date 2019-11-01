@@ -7,7 +7,6 @@ test:
   script:
     - bundle exec rspec
   only:
-    - merge_requests
     - master
 
 .credentails_template: &credentials
@@ -26,8 +25,6 @@ deploy_review:
     name: review/$CI_COMMIT_REF_NAME
     url: http://git-shoutout-$CI_ENVIRONMENT_SLUG.us-east-1.elasticbeanstalk.com
     on_stop: stop_review
-  only:
-    - merge_requests
 
 stop_review:
   <<: *credentials
@@ -38,8 +35,6 @@ stop_review:
   environment:
     name: review/$CI_COMMIT_REF_NAME
     action: stop
-  only:
-    - merge_requests
   when:
     manual
     
