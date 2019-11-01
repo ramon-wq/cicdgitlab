@@ -1,11 +1,7 @@
 test:
   image: "ruby:2.6.3"
-  before_script:
-    - gem install bundler --no-document
-    - bundle install
-    - RAILS_ENV=test bundle exec rails db:schema:load
   script:
-    - bundle exec rspec
+    - echo "HELLO!"
 
 .credentails_template: &credentials
   before_script:
@@ -17,8 +13,7 @@ deploy_review:
   stage: deploy
   image: coxauto/aws-ebcli
   script:
-    - chmod +x ./deploy.sh
-    - ./deploy.sh
+    - echo "DEPLOY!"
   environment:
     name: review/$CI_COMMIT_REF_NAME
     url: http://git-shoutout-$CI_ENVIRONMENT_SLUG.us-east-1.elasticbeanstalk.com
@@ -29,7 +24,7 @@ stop_review:
   stage: deploy
   image: coxauto/aws-ebcli
   script:
-    - eb terminate --force "$CI_ENVIRONMENT_SLUG" | tee "$CIRCLE_ARTIFACTS/eb_deploy_output.txt"
+    - echo "Terminate!"
   environment:
     name: review/$CI_COMMIT_REF_NAME
     action: stop
@@ -41,8 +36,7 @@ deploy:
   stage: deploy
   image: coxauto/aws-ebcli
   script:
-    - chmod +x ./deploy.sh
-    - ./deploy.sh
+    - echo "Deploy Staging"
   environment:
     name: staging
     url: http://git-shoutout-staging.us-east-1.elasticbeanstalk.com
