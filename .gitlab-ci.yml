@@ -18,6 +18,8 @@ deploy_review:
     name: review/$CI_COMMIT_REF_NAME
     url: http://git-shoutout-$CI_ENVIRONMENT_SLUG.us-east-1.elasticbeanstalk.com
     on_stop: stop_review
+  only:
+    - external_pull_requests
 
 stop_review:
   <<: *credentials
@@ -30,7 +32,9 @@ stop_review:
     action: stop
   when:
     manual
-    
+  only:
+    - external_pull_requests
+
 deploy:
   <<: *credentials
   stage: deploy
@@ -41,4 +45,4 @@ deploy:
     name: staging
     url: http://git-shoutout-staging.us-east-1.elasticbeanstalk.com
   only:
-    - master
+    - develop
