@@ -16,11 +16,18 @@ jobs:
       - run:
           name: Yarn Install
           command: yarn install
+      - run:
+          name: Run Specs
+          command: bundle exec rspec
   deploy_review_app:
     docker:
       - image: coxauto/aws-ebcli
     steps:
       - checkout
+      - run:
+          name: "Setup CI_ENVIRONMENT_SLUG environment variables"
+          command: |
+            echo 'export CI_ENVIRONMENT_SLUG="$CIRCLE_BRANCH$CIRCLE_SHA1"' >> $BASH_ENV
       - run:
           name: Prepare deploy script
           command: chmod +x ./deploy.sh
