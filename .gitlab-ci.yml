@@ -6,8 +6,6 @@ test:
     - RAILS_ENV=test bundle exec rails db:schema:load
   script:
     - bundle exec rspec
-  only:
-    - master
 
 .credentails_template: &credentials
   before_script:
