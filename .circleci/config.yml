@@ -25,9 +25,13 @@ jobs:
     steps:
       - checkout
       - run:
+          name: "Set SHA1 slug"
+          command: |
+            echo 'export SHA1_SLUG=`git rev-parse --short=5 $CIRCLE_SHA1`' >> $BASH_ENV
+      - run:
           name: "Setup CI_ENVIRONMENT_SLUG environment variables"
           command: |
-            echo 'export CI_ENVIRONMENT_SLUG="$CIRCLE_BRANCH$CIRCLE_SHA1"' >> $BASH_ENV
+            echo 'export CI_ENVIRONMENT_SLUG="$CIRCLE_BRANCH$SHA1_SLUG"' >> $BASH_ENV
       - run:
           name: Prepare deploy script
           command: chmod +x ./deploy.sh
