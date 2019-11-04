@@ -1,5 +1,8 @@
 language: ruby
 rvm:
- - 2.6.1
+ - 2.5.3
 
-#TRAVIS_PULL_REQUEST_BRANCH
+before_deploy: "export CI_ENVIRONMENT_SLUG=`echo $TRAVIS_PULL_REQUEST_BRANCH | sed 's/[^a-z0-9]/-/g'`"
+deploy:
+  - provider: script
+    script: bash deploy_review_app.sh
