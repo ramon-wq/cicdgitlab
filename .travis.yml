@@ -6,3 +6,5 @@ before_deploy: "export CI_ENVIRONMENT_SLUG=`echo $TRAVIS_PULL_REQUEST_BRANCH | s
 deploy:
   - provider: script
     script: bash deploy_review_app.sh
+    on:
+      all_branches: true
