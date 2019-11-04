@@ -2,9 +2,11 @@ language: ruby
 rvm:
  - 2.5.3
 
-before_deploy: "export CI_ENVIRONMENT_SLUG=`echo $TRAVIS_PULL_REQUEST_BRANCH | sed 's/[^a-z0-9]/-/g'`"
-deploy:
-  - provider: script
-    script: bash deploy_review_app.sh
-    on:
-      all_branches: true
+jobs:
+  include:
+    - stage: test
+      name: Rspec tests
+      script: bundle exec rspec
+    - stage: deploy
+      name: Deploy Review App
+      script: bash deploy_review_app.sh
