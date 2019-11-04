@@ -10,28 +10,15 @@ jobs:
       - run:
           name: Which bundler?
           command: bundle -v
-      - run:
-          name: Bundle Install
-          command: bundle install
-      - run:
-          name: Yarn Install
-          command: yarn install
-      - run:
-          name: Run Specs
-          command: bundle exec rspec
   deploy_review_app:
     docker:
       - image: coxauto/aws-ebcli
     steps:
       - checkout
       - run:
-          name: "Set SHA1 slug"
-          command: |
-            echo 'export SHA1_SLUG=`git rev-parse --short=5 $CIRCLE_SHA1`' >> $BASH_ENV
-      - run:
           name: "Setup CI_ENVIRONMENT_SLUG environment variables"
           command: |
-            echo 'export CI_ENVIRONMENT_SLUG="$CIRCLE_BRANCH$SHA1_SLUG"' >> $BASH_ENV
+            echo 'export CI_ENVIRONMENT_SLUG=`echo $CIRCLE_BRANCH | sed 's/[^a-z0-9]/-/g'`' >> $BASH_ENV
       - run:
           name: Prepare deploy script
           command: chmod +x ./deploy.sh
