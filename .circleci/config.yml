@@ -61,7 +61,7 @@ workflows:
       - deploy_review_app:
           filters:
             branches:
-              only: /*.\/.*/
+              only: /.*\/.*/
           requires:
             - test
       - stop_review_app:
