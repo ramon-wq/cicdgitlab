@@ -1,0 +1,80 @@
+version: 2
+
+jobs:
+  test:
+    docker:
+      - image: circleci/ruby:2.6.1-stretch-node
+    steps:
+      - checkout
+      # Which version of bundler?
+      - run:
+          name: Which bundler?
+          command: bundle -v
+  deploy_review_app:
+    docker:
+      - image: coxauto/aws-ebcli
+    steps:
+      - checkout
+      - run:
+          name: Setup CI_ENVIRONMENT_SLUG environment variables
+          command: |
+            echo 'export CI_ENVIRONMENT_SLUG=`echo $CIRCLE_BRANCH | sed 's/[^a-z0-9]/-/g'`' >> $BASH_ENV
+      - run:
+          name: Prepare deploy script
+          command: chmod +x ./deploy.sh
+      - run:
+          name: Deploy application
+          command: ./deploy.sh
+  stop_review_app:
+    docker:
+      - image: coxauto/aws-ebcli
+    steps:
+      - checkout
+      - run:
+          name: Setup CI_ENVIRONMENT_SLUG environment variables
+          command: |
+            echo 'export CI_ENVIRONMENT_SLUG=`echo $CIRCLE_BRANCH | sed 's/[^a-z0-9]/-/g'`' >> $BASH_ENV
+      - run:
+          name: Terminate the Environment
+          command: eb terminate --force "$CI_ENVIRONMENT_SLUG"
+  deploy_staging:
+    docker:
+      - image: coxauto/aws-ebcli
+    steps:
+      - checkout
+      - run:
+          name: Setup CI_ENVIRONMENT_SLUG environment variables
+          command: |
+            echo 'export CI_ENVIRONMENT_SLUG=staging' >> $BASH_ENV
+      - run:
+          name: Prepare deploy script
+          command: chmod +x ./deploy.sh
+      - run:
+          name: Deploy application
+          command: ./deploy.sh
+
+workflows:
+  version: 2
+  test_and_deploy_review_app:
+    jobs:
+      - test
+      - deploy_review_app:
+          filters:
+            branches:
+              only: /.*\/.*/
+          requires:
+            - test
+      - stop_review_app:
+          type: approval
+          filters:
+            branches:
+              ignore:
+                - master
+          requires:
+            - deploy_review_app
+      - deploy_staging:
+          filters:
+            branches:
+              only: master
+          requires:
+            - test
