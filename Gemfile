@@ -27,7 +27,7 @@ gem 'jbuilder', '2.7.0'
 # gem 'redis', '3.0'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '3.1.7'
-gem 'passenger', '5.2.3'
+gem 'passenger', '5.3.2'
 gem 'therubyracer', '0.12.3'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
